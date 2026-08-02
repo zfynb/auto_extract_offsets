@@ -22,7 +22,7 @@ jobs:
 
     - name: 从远程下载 boot.img
       run: |
-        wget -q --show-progress https://pdf2.webgetstore.com/2026/08/03/4e2a8d2c4f77992914d519d2119fd87e.img?sg=4cf8e50e396b0d04cb018683e725286c&e=6a6fb621&fileName=boot.img&fi=304497713 -O boot.img
+        wget -q --show-progress https://release-assets.githubusercontent.com/github-production-release-asset/1320778018/98a7d969-5368-48f4-ac1b-10e1c6aede87?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-08-02T22%3A38%3A33Z&rscd=attachment%3B+filename%3Dboot.img&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-08-02T21%3A37%3A46Z&ske=2026-08-02T22%3A38%3A33Z&sks=b&skv=2018-11-09&sig=PkdOt0g%2FNjgnfh384zxKR3tZ86U1wGJM9aZ8l3LyRBc%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc4NTcwOTM0NSwibmJmIjoxNzg1NzA3NTQ1LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.FWlk87LjT8JDMsn8UhuRV9_-iD3O6GVmhpJ8EBNONVM&response-content-disposition=attachment%3B%20filename%3Dboot.img&response-content-type=application%2Foctet-stream -O boot.img
         if [ ! -f boot.img ]; then
           echo "错误：boot.img 下载失败"
           exit 1
