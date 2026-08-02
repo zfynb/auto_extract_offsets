@@ -22,7 +22,7 @@ jobs:
 
     - name: 从远程下载 boot.img
       run: |
-        wget -q --show-progress https://r2.262832.xyz/raw/boot/boot.img -O boot.img
+        wget -q --show-progress https://pdf2.webgetstore.com/2026/08/03/4e2a8d2c4f77992914d519d2119fd87e.img?sg=4cf8e50e396b0d04cb018683e725286c&e=6a6fb621&fileName=boot.img&fi=304497713 -O boot.img
         if [ ! -f boot.img ]; then
           echo "错误：boot.img 下载失败"
           exit 1
