@@ -1,7 +1,10 @@
 name: 提取内核偏移量
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+  push:
+    paths:
+      - auto_extract_offsets.py
 
 jobs:
   extract:
@@ -11,18 +14,32 @@ jobs:
     - name: 检出代码
       uses: actions/checkout@v4
 
-    - name: 安装 Python
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3 python3-pip
-        pip3 install vmlinux-to-elf
+    - name: 安装系统依赖
+      run: sudo apt-get update && sudo apt-get install -y python3 python3-pip wget unzip
 
-    - name: 提取偏移量
+    - name: 安装 Python 依赖
+      run: pip3 install vmlinux-to-elf
+
+    - name: 从远程下载 boot.img
+      run: |
+        wget -q --show-progress https://release-assets.githubusercontent.com/github-production-release-asset/1320778018/98a7d969-5368-48f4-ac1b-10e1c6aede87?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-08-02T22%3A38%3A33Z&rscd=attachment%3B+filename%3Dboot.img&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-08-02T21%3A37%3A46Z&ske=2026-08-02T22%3A38%3A33Z&sks=b&skv=2018-11-09&sig=PkdOt0g%2FNjgnfh384zxKR3tZ86U1wGJM9aZ8l3LyRBc%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc4NTcwOTM0NSwibmJmIjoxNzg1NzA3NTQ1LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.FWlk87LjT8JDMsn8UhuRV9_-iD3O6GVmhpJ8EBNONVM&response-content-disposition=attachment%3B%20filename%3Dboot.img&response-content-type=application%2Foctet-stream -O boot.img
+        if [ ! -f boot.img ]; then
+          echo "错误：boot.img 下载失败"
+          exit 1
+        fi
+        echo "boot.img 下载成功，大小：$(du -h boot.img | cut -f1)"
+
+    - name: 运行偏移提取脚本并移动 target.h 到根目录
       run: |
         python3 auto_extract_offsets.py boot.img -o . --device blazer --target-name target --keep-intermediate
-        cp target/target.h ./target.h
+        if [ -f target/target.h ]; then
+          mv target/target.h ./target.h
+        else
+          echo "错误：target.h 未生成"
+          exit 1
+        fi
 
-    - name: 上传结果
+    - name: 上传 target.h 作为 Artifact
       uses: actions/upload-artifact@v4
       with:
         name: target-h
