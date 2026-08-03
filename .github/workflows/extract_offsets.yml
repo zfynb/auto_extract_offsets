@@ -1,41 +1,19 @@
-name: 提取内核偏移量
+# 这里是生成 target.h 的步骤（你原来就有的）
+# ... 你的扫描代码 ...
 
-on:
-  workflow_dispatch
-
-jobs:
-  extract:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: 检出代码
-      uses: actions/checkout@v4
-
-    - name: 安装依赖
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3 python3-pip
-        pip3 install vmlinux-to-elf
-
-    - name: 从 Release 下载 boot.img
-      run: |
-        echo "正在从 Release 下载 boot.img..."
-        wget -O boot.img "https://github.com/zfynb/auto_extract_offsets/releases/download/1.0/boot.img"
-        if [ -f boot.img ]; then
-          echo "下载成功，文件大小：$(du -h boot.img | cut -f1)"
-        else
-          echo "错误：下载失败"
-          exit 1
-        fi
-
-    - name: 提取偏移量
-      run: |
-        python3 auto_extract_offsets.py boot.img -o . --device blazer --target-name target --keep-intermediate
-        cp target/target.h ./target.h
-
-    - name: 上传结果
-      uses: actions/upload-artifact@v4
-      with:
-        name: target-h
-        path: target.h
-        if-no-files-found: error
+# ====== 新增：编译 preload.so ======
+- name: 安装 NDK
+  run: |
+    wget -q https://dl.google.com/android/repository/android-ndk-r27-linux.zip
+    unzip -q android-ndk-r27-linux.zip
+    echo "$(pwd)/android-ndk-r27/build" >> $GITHUB_PATH
+    
+- name: 编译 preload.so
+  run: |
+    ndk-build
+    
+- name: 上传 preload.so
+  uses: actions/upload-artifact@v3
+  with:
+    name: preload
+    path: libs/**/libpreload.so
