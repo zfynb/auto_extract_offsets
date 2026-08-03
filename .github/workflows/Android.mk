@@ -1,7 +1,0 @@
-LOCAL_PATH := $(call my-dir)
-include $(CLEAR_VARS)
-LOCAL_MODULE := preload
-LOCAL_SRC_FILES := main.c
-LOCAL_C_INCLUDES := $(LOCAL_PATH)
-LOCAL_CFLAGS := -O2 -Wall -fPIC
-include $(BUILD_SHARED_LIBRARY)
